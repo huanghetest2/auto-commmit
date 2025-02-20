@@ -1,4 +1,4 @@
-name: Huanghe
+name: Sang
 on:
 
   workflow_dispatch:
@@ -30,8 +30,8 @@ jobs:
 
       - name: Auto commit with random number
         run: |
-          git config --local user.email "dexsaclube@hotmail.com" 
-          git config --local user.name "huanghetest1"
+          git config --local user.email "chxakey@hotmail.com" 
+          git config --local user.name "huanghetest2"
           git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git pull --rebase
           ./random_commit.sh
