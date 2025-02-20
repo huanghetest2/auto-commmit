@@ -1,0 +1,38 @@
+name: Huanghe
+on:
+
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "23 0 * * *" # 每天的 0:23 执行
+
+jobs:
+  autogreen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Setup random commit script
+        run: |
+          echo '#!/bin/bash' > random_commit.sh
+          echo 'RANDOM_PROB=$(( RANDOM % 5 ))' >> random_commit.sh     # 每日提交概率[0,5]
+          echo 'if [[ $RANDOM_PROB -ne 0 ]]; then' >> random_commit.sh
+          echo '  RANDOM_NUM=$(( 1 + RANDOM % 3 ))' >> random_commit.sh  # 每次提交数目[1,3]
+          echo '  for i in $(seq 1 $RANDOM_NUM); do' >> random_commit.sh
+          echo '    git commit --allow-empty -m "Auto commit workflows"' >> random_commit.sh
+          echo '  done' >> random_commit.sh
+          echo 'fi' >> random_commit.sh
+          chmod +x random_commit.sh
+
+      - name: Auto commit with random number
+        run: |
+          git config --local user.email "dexsaclube@hotmail.com" 
+          git config --local user.name "huanghetest1"
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull --rebase
+          ./random_commit.sh
+          git push
